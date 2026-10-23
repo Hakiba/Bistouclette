@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.1](https://github.com/Hakiba/Bistouclette/compare/v0.2.0...v0.2.1) (2026-10-23)
+
+
+### Bug Fixes
+
+* afficher « Bistouclette » comme titre du site ([#18](https://github.com/Hakiba/Bistouclette/issues/18)) ([60c35d4](https://github.com/Hakiba/Bistouclette/commit/60c35d4b1d300724fcf82b3ca04c1cff58803e78))
+
 ## [0.2.0](https://github.com/Hakiba/Bistouclette/compare/bistoulette_frontend-v0.1.0...bistoulette_frontend-v0.2.0) (2026-10-23)
 
 
