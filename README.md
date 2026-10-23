@@ -47,6 +47,68 @@ Les sorties de build et les fichiers d'environnement sont volontairement exclus 
 La convention d'architecture détaillée et la boucle TDD sont documentées dans
 [`backend/ARCHITECTURE.md`](./backend/ARCHITECTURE.md).
 
+## Contribuer
+
+Les contributions sont les bienvenues. Personne ne pousse directement sur
+`main` : tout passe par une pull request.
+
+1. **Forke** le dépôt (ou crée une branche si tu as les droits d'écriture),
+   puis crée une branche depuis `main`, par exemple `feat/classement-par-mois`.
+2. **Développe** en suivant la section [Développement](#développement), et
+   ajoute ou mets à jour les tests qui couvrent ton changement.
+3. **Vérifie en local** avant de pousser :
+
+   ```bash
+   npm run check
+   ```
+
+4. **Ouvre une pull request** vers `main`. Décris le changement et son
+   intention.
+5. **Attends la CI.** Le job `check` (typage, lint, tests, build) doit être
+   vert. Si le premier workflow d'un nouveau contributeur reste en attente,
+   un mainteneur doit l'approuver : c'est normal.
+6. **Relecture.** Une approbation d'un mainteneur est nécessaire. Corrige les
+   remarques en poussant de nouveaux commits sur la même branche.
+7. **Merge.** Le mainteneur fusionne en *squash* : la PR devient un seul commit
+   sur `main`, sans commit de merge.
+
+### Titre de la PR
+
+Le titre de la PR devient le message du commit sur `main` et alimente le
+`CHANGELOG.md` et les numéros de version. Il doit suivre
+[Conventional Commits](https://www.conventionalcommits.org/fr/) :
+
+| Préfixe | Usage | Effet sur la version |
+| --- | --- | --- |
+| `feat:` | nouvelle fonctionnalité | mineure |
+| `fix:` | correction de bug | correctif |
+| `feat!:` ou `fix!:` | changement incompatible | majeure |
+| `docs:`, `chore:`, `ci:`, `test:`, `refactor:` | le reste | aucune release |
+
+Exemple : `fix: corriger le calcul des points sur un match nul`.
+
+### Ce qu'il ne faut jamais committer
+
+Aucun secret : mots de passe, jetons, clés SSH, fichiers `.env`. Le fichier
+`backend/.env` est ignoré par Git ; ne le force pas. Si tu as un doute sur un
+secret déjà poussé, signale-le à un mainteneur plutôt que de le supprimer
+dans un nouveau commit.
+
+### Mises à jour de dépendances
+
+Dependabot ouvre chaque semaine des PR de mises à jour. Les mises à jour
+mineures et correctifs sont fusionnées automatiquement quand la CI est verte ;
+les mises à jour majeures sont relues à la main.
+
+### Releases et déploiement
+
+Rien n'est déployé à chaque merge. À chaque push sur `main`,
+[release-please](https://github.com/googleapis/release-please) tient à jour
+une PR « release » qui incrémente la version et met à jour `CHANGELOG.md`.
+**Seule la fusion de cette PR par un mainteneur** crée le tag `vX.Y.Z`, la
+release GitHub et lance le déploiement. Les contributeurs n'ont rien à faire
+pour cela.
+
 ## Le Five en deux minutes
 
 C'est un **jeu de pronostics**, pas un jeu d'argent : aucune mise, aucun
