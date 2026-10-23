@@ -9,7 +9,7 @@ import UserCookie from "../utils/UserCookie";
 const navItems = [
   { label: "Accueil", href: "/" },
   { label: "Vélo", href: "/velo" },
-  { label: "Foot", href: "/five" },
+  { label: "BistouProno", href: "/five" },
 ];
 
 /** Gouttière horizontale commune à l'en-tête, au contenu et au pied de page. */
