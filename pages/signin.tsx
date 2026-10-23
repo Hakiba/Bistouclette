@@ -191,6 +191,10 @@ export default function SignIn() {
         </Form>
 
         <SecondaryText>
+          <Link href='/forgot-password'>Mot de passe oublié ?</Link>
+        </SecondaryText>
+
+        <SecondaryText>
           Pas encore inscrit ? <Link href='/signup'>Créer un compte</Link>
         </SecondaryText>
       </Card>
