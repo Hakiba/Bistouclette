@@ -1,6 +1,6 @@
 {
   "name": "bistoulette_frontend",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "private": true,
   "scripts": {
     "dev": "cross-env NODE_ENV=development next dev -p 3000",
@@ -10,7 +10,7 @@
     "build": "npm run build:frontend && npm run sync:frontend && npm --prefix backend run build && npm run sync:backend-build",
     "sync:backend-build": "node scripts/sync-backend-build.mjs",
     "start": "node backend/build/server.js",
-    "lint": "next lint",
+    "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "test:backend": "npm --prefix backend run test",
     "check": "npm run typecheck && npm run lint && npm --prefix backend run typecheck && npm --prefix backend run lint && npm run test:backend"
@@ -27,14 +27,15 @@
     "styled-components": "^6.6.0"
   },
   "devDependencies": {
+    "@tailwindcss/postcss": "^4.3.3",
     "@types/bcryptjs": "^2.4.6",
     "@types/node": "^26.6.5",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "autoprefixer": "^10.6.1",
     "cross-env": "^10.1.0",
-    "eslint": "^8",
-    "eslint-config-next": "^14.2.35",
+    "eslint": "^9.39.5",
+    "eslint-config-next": "^16.4.3",
     "postcss": "^8.5.31",
     "tailwindcss": "^4.3.3",
     "typescript": "^5.9.2"
