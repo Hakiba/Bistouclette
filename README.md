@@ -36,6 +36,9 @@ NEXT_PUBLIC_API_URL=http://localhost:3333 npm run dev
 
 Le front de développement appelle l'API sur le port 3333. L'origine
 `http://localhost:3000` est autorisée par la configuration CORS du backend.
+Pour la récupération de mot de passe, renseigner également `APP_URL` (adresse du
+site), les paramètres `SMTP_*` et `MAIL_FROM` dans `backend/.env`. En production,
+`APP_URL` doit utiliser HTTPS.
 
 ```bash
 npm run check             # typage, lint et tous les tests
@@ -138,6 +141,8 @@ par un port de persistance, ce qui permet de le tester sans serveur ni base de d
 | --- | --- | --- | --- |
 | `POST` | `/api/create_user` | public | crée un compte joueur (`username`, `firstName`, `lastName`, `email`, `password`) et renvoie le compte avec un jeton |
 | `POST` | `/api/login` | public | authentifie avec `email` et `password`, puis renvoie le compte et un jeton |
+| `POST` | `/api/password/forgot` | public | demande un lien de réinitialisation avec `{ email }` |
+| `POST` | `/api/password/reset` | public | définit un nouveau mot de passe avec `{ token, password }` |
 | `POST` | `/api/logout` | joueur | révoque le jeton de la session |
 | `GET` | `/api/five` | public (jeton optionnel) | matchs, classement, et contexte du joueur s'il est connecté |
 | `GET` | `/api/five/leaderboard` | public | classement seul |
@@ -175,6 +180,7 @@ lancer les migrations.
 | --- | --- |
 | `five_matches` | rencontres : `kickoff_at`, équipes, lieu, score, statut |
 | `five_pronostics` | un pronostic par `(user_id, match_id)` : score annoncé et points obtenus (`NULL` tant que le match n'est pas réglé) |
+| `password_reset_tokens` | jetons de réinitialisation hachés, à usage unique et valables une heure |
 
 ## Déploiement
 
