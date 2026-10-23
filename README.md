@@ -83,7 +83,7 @@ Le titre de la PR devient le message du commit sur `main` et alimente le
 | `feat:` | nouvelle fonctionnalité | mineure |
 | `fix:` | correction de bug | correctif |
 | `feat!:` ou `fix!:` | changement incompatible | majeure |
-| `docs:`, `chore:`, `ci:`, `test:`, `refactor:` | le reste | aucune release |
+| `docs:`, `chore:`, `ci:`, `test:`, `refactor:` | le reste | correctif |
 
 Exemple : `fix: corriger le calcul des points sur un match nul`.
 
