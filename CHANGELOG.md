@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.3.2](https://github.com/Hakiba/Bistouclette/compare/v0.3.1...v0.3.2) (2026-10-23)
+
+
+### Build System
+
+* **deps-dev:** bump typescript from 5.9.3 to 7.0.2 in /backend ([#5](https://github.com/Hakiba/Bistouclette/issues/5)) ([442a940](https://github.com/Hakiba/Bistouclette/commit/442a9405df5a580c8b534687995ea6695c8272b5))
+* **deps:** bump next from 14.2.35 to 16.4.3 ([#25](https://github.com/Hakiba/Bistouclette/issues/25)) ([e99df43](https://github.com/Hakiba/Bistouclette/commit/e99df4326545f8a33c4f24e7a85cdb8d6e8164ef))
+
+## [0.3.1](https://github.com/Hakiba/Bistouclette/compare/v0.3.0...v0.3.1) (2026-10-23)
+
+
+### Build System
+
+* **deps-dev:** bump brace-expansion from 1.1.11 to 1.1.21 ([#23](https://github.com/Hakiba/Bistouclette/issues/23)) ([1eed05c](https://github.com/Hakiba/Bistouclette/commit/1eed05cf3be0917acd090cc59a687b4f6bb1cb5f))
+* **deps-dev:** bump typescript from 5.9.2 to 7.0.2 ([#10](https://github.com/Hakiba/Bistouclette/issues/10)) ([d013f1e](https://github.com/Hakiba/Bistouclette/commit/d013f1e69b843115dee7192dde453807aa5ba01f))
+* **deps:** bump postcss-selector-parser and tailwindcss ([#22](https://github.com/Hakiba/Bistouclette/issues/22)) ([474c7ec](https://github.com/Hakiba/Bistouclette/commit/474c7ecb9f72d69537f2fd44b27bb34fb0ce2ec9))
+* **deps:** bump react-dom and @types/react-dom ([#12](https://github.com/Hakiba/Bistouclette/issues/12)) ([ac0c64f](https://github.com/Hakiba/Bistouclette/commit/ac0c64fd5e2f4fb643b4c3c783a8e8673b248317))
+
 ## [0.3.0](https://github.com/Hakiba/Bistouclette/compare/v0.2.1...v0.3.0) (2026-10-23)
 
 
