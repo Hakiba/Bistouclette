@@ -1,5 +1,11 @@
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
 import { hashPassword, verifyPassword } from 'App/infra/password'
+import {
+  createPasswordResetToken,
+  ensurePasswordResetSchema,
+  resetPassword,
+  sendPasswordResetEmail,
+} from 'App/infra/password-reset'
 import Database from 'App/drivers/mysql/mysql'
 import { findUserByToken, issueToken, revokeToken, type AuthUser } from 'App/infra/auth'
 import ensureFiveSchema from 'App/drivers/five/five-schema'
@@ -70,6 +76,60 @@ async function playerPayload(userId: number, board?: Repository.PlayerRow[]) {
 
 export async function registerRoutes(app: FastifyInstance) {
   app.get('/api', async () => ({ hello: 'world' }))
+  app.post('/api/password/forgot', async (request, reply) => {
+    try {
+      await ensurePasswordResetSchema()
+      const email = String(body(request).email || '')
+        .trim()
+        .toLowerCase()
+      const reset = email ? await createPasswordResetToken(email) : null
+
+      if (reset) {
+        try {
+          await sendPasswordResetEmail(reset.email, reset.token)
+        } catch (cause) {
+          // La réponse reste identique même si l'envoi échoue, pour ne pas révéler
+          // si l'adresse correspond à un compte.
+          requestLog(cause)
+        }
+      }
+
+      return reply.code(202).send({
+        message:
+          'Si un compte correspond à cette adresse, un lien de réinitialisation a été envoyé.',
+      })
+    } catch (cause) {
+      return error(reply, cause)
+    }
+  })
+  app.post('/api/password/reset', async (request, reply) => {
+    try {
+      await ensurePasswordResetSchema()
+      const input = body(request)
+      const token = String(input.token || '')
+      const password = String(input.password || '')
+
+      if (!/^[A-Za-z0-9_-]{43}$/.test(token))
+        return reply
+          .code(400)
+          .send({ message: 'Ce lien de réinitialisation est invalide ou expiré.' })
+      if (password.length < 8)
+        return reply
+          .code(400)
+          .send({ message: 'Le mot de passe doit contenir au moins 8 caractères.' })
+
+      const updated = await resetPassword(token, password)
+
+      if (!updated)
+        return reply
+          .code(400)
+          .send({ message: 'Ce lien de réinitialisation est invalide ou expiré.' })
+
+      return { message: 'Mot de passe modifié. Vous pouvez vous connecter.' }
+    } catch (cause) {
+      return error(reply, cause)
+    }
+  })
   app.post('/api/create_user', async (request, reply) => {
     try {
       const input = body(request)
