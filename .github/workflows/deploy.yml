@@ -1,0 +1,65 @@
+name: Build & Deploy
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-main
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            backend/package-lock.json
+
+      - run: npm ci
+      - run: npm --prefix backend ci
+      - run: npm run check
+
+      # Le .env de production n'est jamais construit ici : il reste sur le serveur.
+      - name: Build
+        run: npm run build
+        env:
+          NEXT_PUBLIC_API_URL: /api
+
+      - name: Configurer SSH
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
+        run: |
+          mkdir -p ~/.ssh
+          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          printf '%s\n' "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+
+      # Le serveur ne peut pas construire : les builds sont envoyés tels quels.
+      # backend/build/.env est propre au serveur et n'est ni écrasé ni supprimé.
+      - name: Envoyer les builds
+        env:
+          SSH_PORT: ${{ secrets.SSH_PORT }}
+          DEST: ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.SSH_APP_PATH }}/backend
+        run: |
+          rsync -az --delete -e "ssh -p $SSH_PORT" backend/public/ "$DEST/public/"
+          rsync -az --delete --exclude '/.env' -e "ssh -p $SSH_PORT" backend/build/ "$DEST/build/"
+
+      - name: Redémarrer l'application
+        env:
+          SSH_PORT: ${{ secrets.SSH_PORT }}
+          TARGET: ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}
+          APP_PATH: ${{ secrets.SSH_APP_PATH }}
+        run: |
+          ssh -p "$SSH_PORT" "$TARGET" \
+            "/usr/sbin/cloudlinux-selector restart --json --interpreter=nodejs --app-root='$APP_PATH/'"

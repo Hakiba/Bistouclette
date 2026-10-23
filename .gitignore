@@ -1,0 +1,20 @@
+/node_modules
+/.next
+out/
+backend/build/
+backend/public/
+backend/node_modules/
+*.tsbuildinfo
+.DS_Store
+Archive.zip
+.ftp-deploy-sync-state.json
+
+# Fichiers d'environnement : ils contiennent des identifiants.
+.env
+.env.local
+.env*.local
+/.env.build
+/.env.dev
+backend/.env
+backend/.env.*
+!backend/.env.example

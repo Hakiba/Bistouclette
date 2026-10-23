@@ -1,0 +1,10 @@
+node_modules
+# build/ et public/ sont construits par la CI puis envoyés par rsync.
+build/
+public/
+coverage
+.vscode
+.DS_STORE
+.env
+tmp
+.env.build

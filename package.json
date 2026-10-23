@@ -1,0 +1,42 @@
+{
+  "name": "bistoulette_frontend",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "cross-env NODE_ENV=development next dev -p 3000",
+    "dev:backend": "npm --prefix backend run dev",
+    "build:frontend": "cross-env NODE_ENV=production next build",
+    "sync:frontend": "node scripts/sync-static.mjs",
+    "build": "npm run build:frontend && npm run sync:frontend && npm --prefix backend run build && npm run sync:backend-build",
+    "sync:backend-build": "node scripts/sync-backend-build.mjs",
+    "start": "node backend/build/server.js",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit",
+    "test:backend": "npm --prefix backend run test",
+    "check": "npm run typecheck && npm run lint && npm --prefix backend run typecheck && npm --prefix backend run lint && npm run test:backend"
+  },
+  "dependencies": {
+    "@types/js-cookie": "^3.0.6",
+    "bcryptjs": "^2.4.3",
+    "js-cookie": "^3.0.8",
+    "mysql2": "^3.24.4",
+    "next": "^14.2.35",
+    "next-auth": "^4.24.5",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "styled-components": "^6.1.13"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/node": "^20.17.10",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "autoprefixer": "^10.6.1",
+    "cross-env": "^7.0.3",
+    "eslint": "^8",
+    "eslint-config-next": "^14.2.35",
+    "postcss": "^8.5.28",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5.9.2"
+  }
+}

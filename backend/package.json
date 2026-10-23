@@ -1,0 +1,60 @@
+{
+  "name": "backend_bistouclette",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "tsx watch server.ts",
+    "build": "tsc && tsc-alias",
+    "start": "node server.js",
+    "test": "tsx --test tests/**/*.test.ts",
+    "typecheck": "tsc --noEmit",
+    "lint": "prettier --check \"server.ts\" \"src/**/*.ts\" \"tests/**/*.ts\"",
+    "format": "prettier --write ."
+  },
+  "eslintConfig": {
+    "extends": [
+      "eslint:recommended",
+      "prettier"
+    ],
+    "plugins": [
+      "prettier"
+    ],
+    "rules": {
+      "prettier/prettier": [
+        "error"
+      ],
+      "no-unused-vars": "off"
+    }
+  },
+  "eslintIgnore": [
+    "build"
+  ],
+  "prettier": {
+    "trailingComma": "es5",
+    "semi": false,
+    "singleQuote": true,
+    "useTabs": false,
+    "quoteProps": "consistent",
+    "bracketSpacing": true,
+    "arrowParens": "always",
+    "printWidth": 100
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "eslint": "^8.55.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.0.1",
+    "prettier": "^3.1.0",
+    "tsc-alias": "^1.9.9",
+    "tsx": "^4.23.15",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "@fastify/cors": "^11.3.1",
+    "@fastify/static": "^10.1.7",
+    "bcryptjs": "^2.4.3",
+    "dotenv": "^18.0.9",
+    "fastify": "^5.12.7",
+    "mysql2": "^3.6.5"
+  }
+}
