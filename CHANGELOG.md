@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.0](https://github.com/Hakiba/Bistouclette/compare/v0.4.0...v0.5.0) (2026-10-27)
+
+
+### Features
+
+* enhance password reset email with HTML template and add HTML es… ([#41](https://github.com/Hakiba/Bistouclette/issues/41)) ([9e0be33](https://github.com/Hakiba/Bistouclette/commit/9e0be3361dc4a7fb1aff381afa472684fce59193))
+
 ## [0.4.0](https://github.com/Hakiba/Bistouclette/compare/v0.3.3...v0.4.0) (2026-10-27)
 
 
