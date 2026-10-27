@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.3.3](https://github.com/Hakiba/Bistouclette/compare/v0.3.2...v0.3.3) (2026-10-27)
+
+
+### Build System
+
+* **deps-dev:** bump eslint from 9.39.5 to 10.13.0 ([#36](https://github.com/Hakiba/Bistouclette/issues/36)) ([5723bc7](https://github.com/Hakiba/Bistouclette/commit/5723bc7b617407015de0994ddf4bae54c5275432))
+* **deps-dev:** bump picomatch from 2.3.1 to 2.3.2 in /backend ([#30](https://github.com/Hakiba/Bistouclette/issues/30)) ([daaaa31](https://github.com/Hakiba/Bistouclette/commit/daaaa319adcdd53f9855748689429b8a220f217a))
+* **deps:** bump @babel/runtime from 7.23.5 to 7.29.10 ([#29](https://github.com/Hakiba/Bistouclette/issues/29)) ([da9674f](https://github.com/Hakiba/Bistouclette/commit/da9674f055f0dda17e3830c5c3295279cb82f02d))
+* **deps:** bump bcryptjs and @types/bcryptjs ([#34](https://github.com/Hakiba/Bistouclette/issues/34)) ([f9b554e](https://github.com/Hakiba/Bistouclette/commit/f9b554e3fd6d09d78fddb02b9c043004c24a0293))
+* **deps:** bump dependabot/fetch-metadata from 2 to 3 ([#33](https://github.com/Hakiba/Bistouclette/issues/33)) ([c79ca15](https://github.com/Hakiba/Bistouclette/commit/c79ca15a8f3950d1e3f010dd8dcccf7d4c726904))
+* **deps:** bump googleapis/release-please-action from 4 to 5 ([#32](https://github.com/Hakiba/Bistouclette/issues/32)) ([f4e82b7](https://github.com/Hakiba/Bistouclette/commit/f4e82b736ed827c4a26c37ce3f4b6aacb4671b54))
+
 ## [0.3.2](https://github.com/Hakiba/Bistouclette/compare/v0.3.1...v0.3.2) (2026-10-23)
 
 
