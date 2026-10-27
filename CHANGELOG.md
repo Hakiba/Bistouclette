@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.4.0](https://github.com/Hakiba/Bistouclette/compare/v0.3.3...v0.4.0) (2026-10-27)
+
+
+### Features
+
+* implement password reset functionality and UI ([#26](https://github.com/Hakiba/Bistouclette/issues/26)) ([ad72101](https://github.com/Hakiba/Bistouclette/commit/ad721015f5b475227a474d6391a479674cc177f3))
+
+
+### Build System
+
+* **deps-dev:** bump picomatch from 2.3.1 to 2.3.2 in /backend ([#39](https://github.com/Hakiba/Bistouclette/issues/39)) ([1574053](https://github.com/Hakiba/Bistouclette/commit/1574053cbb9f22688f9b1ed0d1946000f4f61892))
+
 ## [0.3.3](https://github.com/Hakiba/Bistouclette/compare/v0.3.2...v0.3.3) (2026-10-27)
 
 
