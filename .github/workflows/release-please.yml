@@ -19,7 +19,7 @@ jobs:
       # obligatoire la bloquerait. Un token personnel (secret RELEASE_PLEASE_TOKEN)
       # corrige cela ; sans lui, on retombe sur le GITHUB_TOKEN.
       - id: release
-        uses: googleapis/release-please-action@v4
+        uses: googleapis/release-please-action@v5
         with:
           token: ${{ secrets.RELEASE_PLEASE_TOKEN || secrets.GITHUB_TOKEN }}
           config-file: release-please-config.json
