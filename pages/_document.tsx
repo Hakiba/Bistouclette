@@ -40,6 +40,9 @@ export default class MyDocument extends Document {
       <Html lang='fr'>
         <Head>
           <meta name='theme-color' content='#edf5ff' />
+          <link rel='apple-touch-icon' href='/apple-touch-icon.png' />
+          <link rel='manifest' href='/site.webmanifest' />
+          <meta name='apple-mobile-web-app-title' content='Bistouclette' />
         </Head>
         <body>
           <Main />
