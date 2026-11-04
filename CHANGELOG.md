@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.6.0](https://github.com/Hakiba/Bistouclette/compare/v0.5.0...v0.6.0) (2026-11-04)
+
+
+### Features
+
+* add home screen icons for iOS and Android ([#44](https://github.com/Hakiba/Bistouclette/issues/44)) ([62a77ad](https://github.com/Hakiba/Bistouclette/commit/62a77ada941a737ab936f94d85dbd2a5831b81ac))
+
+
+### Build System
+
+* **deps:** bump @fastify/static from 10.1.7 to 10.1.8 in /backend in the minor-and-patch group ([#43](https://github.com/Hakiba/Bistouclette/issues/43)) ([aa9e205](https://github.com/Hakiba/Bistouclette/commit/aa9e205eb381c69a5404595b0e8a6b107321ef20))
+
 ## [0.5.0](https://github.com/Hakiba/Bistouclette/compare/v0.4.0...v0.5.0) (2026-10-27)
 
 
