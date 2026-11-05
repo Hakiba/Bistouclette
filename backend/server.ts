@@ -5,10 +5,12 @@ import Fastify from 'fastify'
 import cors from '@fastify/cors'
 import fastifyStatic from '@fastify/static'
 import { registerRoutes } from './src/infra/http/routes'
+import { DiskFileStorage } from './src/drivers/storage/disk-file-storage'
 
 export async function buildServer() {
   const app = Fastify({ logger: process.env.NODE_ENV !== 'test' })
   await app.register(cors, { origin: process.env.NODE_ENV === 'production' ? false : true })
+  await new DiskFileStorage().ensureDir()
   await registerRoutes(app)
   const publicPath = [join(__dirname, 'public'), join(__dirname, '..', 'public')].find(existsSync)
   if (publicPath) await app.register(fastifyStatic, { root: publicPath, wildcard: false })
