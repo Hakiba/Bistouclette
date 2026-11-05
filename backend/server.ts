@@ -3,6 +3,7 @@ import { existsSync } from 'node:fs'
 import { join } from 'node:path'
 import Fastify from 'fastify'
 import cors from '@fastify/cors'
+import multipart from '@fastify/multipart'
 import fastifyStatic from '@fastify/static'
 import { registerRoutes } from './src/infra/http/routes'
 import { DiskFileStorage } from './src/drivers/storage/disk-file-storage'
@@ -11,6 +12,13 @@ export async function buildServer() {
   const app = Fastify({ logger: process.env.NODE_ENV !== 'test' })
   await app.register(cors, { origin: process.env.NODE_ENV === 'production' ? false : true })
   await new DiskFileStorage().ensureDir()
+  // Limite l'import à un fichier par un et 10Mo par fichier par requête, fileSize est en octets.
+  await app.register(multipart, {
+    limits: {
+      fileSize: Number(process.env.MAX_UPLOAD_MB || 10) * 1024 * 1024,
+      files: 1,
+    },
+  })
   await registerRoutes(app)
   const publicPath = [join(__dirname, 'public'), join(__dirname, '..', 'public')].find(existsSync)
   if (publicPath) await app.register(fastifyStatic, { root: publicPath, wildcard: false })
