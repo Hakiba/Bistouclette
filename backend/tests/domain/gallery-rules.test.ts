@@ -41,6 +41,11 @@ test('un WebP est reconnu par RIFF....WEBP', () => {
   assert.equal(detectImageType(webp), 'webp')
 })
 
+test('un conteneur RIFF qui n’est pas du WebP (WAV) est refusé', () => {
+  const wav = Buffer.concat([Buffer.from('RIFF'), Buffer.alloc(4), Buffer.from('WAVE')])
+  assert.equal(detectImageType(wav), null)
+})
+
 test('un fichier qui n’est pas une image autorisée renvoie null', () => {
   assert.equal(detectImageType(Buffer.from('%PDF-1.7')), null)
   assert.equal(detectImageType(Buffer.alloc(0)), null)
