@@ -11,8 +11,8 @@ const skip = !process.env.MYSQL_DB_NAME && 'aucune base MySQL configurée'
 const repository = new MySqlGalleryRepository()
 const createdAlbumIds: number[] = []
 
-async function createAlbum(title = 'Test intégration') {
-  const album = await repository.createAlbum({ section: 'velo', title })
+async function createAlbum(title = 'Test intégration', section: 'velo' | 'five' = 'velo') {
+  const album = await repository.createAlbum({ section, title })
   createdAlbumIds.push(album.id)
   return album
 }
@@ -75,4 +75,50 @@ test('supprimer un album supprime ses photos en cascade', { skip }, async () => 
     photo.id,
   ])) as [unknown[]]
   assert.equal(remaining.length, 0)
+})
+
+test('liste les albums avec compteur et couverture, le plus récent d’abord', { skip }, async () => {
+  const withPhotos = await createAlbum('Avec photos')
+  const empty = await createAlbum('Vide')
+  // Le plus ancien ('z.jpg') n'est pas le premier par ordre alphabétique : un MIN(filename) échouerait.
+  await repository.addPhoto({ albumId: withPhotos.id, filename: 'z.jpg', uploadedBy: 1 })
+  await repository.addPhoto({ albumId: withPhotos.id, filename: 'a.jpg', uploadedBy: 1 })
+
+  const ids = [withPhotos.id, empty.id]
+  const mine = (await repository.listAlbums('velo')).filter((album) => ids.includes(album.id))
+
+  assert.deepEqual(
+    mine.map((album) => album.id),
+    [empty.id, withPhotos.id]
+  )
+  const [vide, avec] = mine
+  assert.equal(avec.photoCount, 2)
+  assert.equal(avec.coverFilename, 'z.jpg')
+  assert.equal(vide.photoCount, 0)
+  assert.equal(vide.coverFilename, null)
+})
+
+test('la photo choisie comme couverture l’emporte sur la plus ancienne', { skip }, async () => {
+  const album = await createAlbum()
+  await repository.addPhoto({ albumId: album.id, filename: 'a.jpg', uploadedBy: 1 })
+  const chosen = await repository.addPhoto({ albumId: album.id, filename: 'b.jpg', uploadedBy: 1 })
+  await Database.rawQuery('UPDATE gallery_albums SET cover_photo_id = ? WHERE id = ?', [
+    chosen.id,
+    album.id,
+  ])
+
+  const found = (await repository.listAlbums('velo')).find((item) => item.id === album.id)
+
+  assert.equal(found?.coverFilename, 'b.jpg')
+})
+
+test('ne liste pas les albums des autres sections', { skip }, async () => {
+  const five = await createAlbum('Finale', 'five')
+
+  const velo = await repository.listAlbums('velo')
+
+  assert.equal(
+    velo.some((album) => album.id === five.id),
+    false
+  )
 })

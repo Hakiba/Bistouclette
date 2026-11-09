@@ -1,5 +1,6 @@
 import type { GalleryRepository } from 'App/application/ports/gallery-repository'
-import type { Album, NewAlbum, NewPhoto, Photo } from 'App/domain/gallery/types'
+import type { GallerySection } from 'App/domain/gallery/gallery-rules'
+import type { Album, AlbumSummary, NewAlbum, NewPhoto, Photo } from 'App/domain/gallery/types'
 import Database from '../mysql/mysql'
 
 type AlbumRow = {
@@ -19,7 +20,12 @@ type PhotoRow = {
   created_at: Date
 }
 
-const ALBUM_COLUMNS = 'id, section, title, cover_photo_id, created_at'
+type AlbumSummaryRow = AlbumRow & {
+  photo_count: number
+  cover_filename: string | null
+}
+
+const ALBUM_COLUMNS = 'a.id, a.section, a.title, a.cover_photo_id, a.created_at'
 const PHOTO_COLUMNS = 'id, album_id, filename, caption, uploaded_by, created_at'
 
 async function select<T>(sql: string, bindings: unknown[] = []) {
@@ -42,6 +48,14 @@ function mapAlbum(row: AlbumRow): Album {
   }
 }
 
+function mapAlbumSummary(row: AlbumSummaryRow): AlbumSummary {
+  return {
+    ...mapAlbum(row),
+    photoCount: Number(row.photo_count),
+    coverFilename: row.cover_filename,
+  }
+}
+
 function mapPhoto(row: PhotoRow): Photo {
   return {
     id: row.id,
@@ -55,6 +69,22 @@ function mapPhoto(row: PhotoRow): Photo {
 
 /** Adaptateur secondaire : traduit le port de la galerie vers MySQL. */
 export class MySqlGalleryRepository implements GalleryRepository {
+  public async listAlbums(section: GallerySection): Promise<AlbumSummary[]> {
+    const rows = await select<AlbumSummaryRow>(
+      `SELECT ${ALBUM_COLUMNS},
+         (SELECT COUNT(*) FROM gallery_photos WHERE album_id = a.id) AS photo_count,
+         COALESCE(
+           (SELECT filename FROM gallery_photos WHERE id = a.cover_photo_id),
+           (SELECT filename FROM gallery_photos WHERE album_id = a.id ORDER BY id LIMIT 1)
+         ) AS cover_filename
+       FROM gallery_albums a
+       WHERE a.section = ?
+       ORDER BY a.created_at DESC, a.id DESC`,
+      [section]
+    )
+    return rows.map(mapAlbumSummary)
+  }
+
   public async createAlbum(input: NewAlbum): Promise<Album> {
     const id = await insert('INSERT INTO gallery_albums (section, title) VALUES (?, ?)', [
       input.section,
@@ -70,7 +100,7 @@ export class MySqlGalleryRepository implements GalleryRepository {
 
   public async findAlbum(id: number): Promise<Album | null> {
     const rows = await select<AlbumRow>(
-      `SELECT ${ALBUM_COLUMNS} FROM gallery_albums WHERE id = ? LIMIT 1`,
+      `SELECT ${ALBUM_COLUMNS} FROM gallery_albums a WHERE a.id = ? LIMIT 1`,
       [id]
     )
     return rows.length > 0 ? mapAlbum(rows[0]) : null

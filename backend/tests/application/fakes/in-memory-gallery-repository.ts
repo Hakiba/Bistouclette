@@ -1,4 +1,5 @@
 import type { GalleryRepository } from '../../../src/application/ports/gallery-repository'
+import type { GallerySection } from '../../../src/domain/gallery/gallery-rules'
 import type { Album, NewAlbum, NewPhoto, Photo } from '../../../src/domain/gallery/types'
 
 /** Faux port en mémoire : aucun SQL, aucun serveur. */
@@ -7,6 +8,17 @@ export class InMemoryGalleryRepository implements GalleryRepository {
   public photos: Photo[] = []
   /** Simule une panne de la base au moment d'enregistrer une photo. */
   public failOnAddPhoto = false
+
+  async listAlbums(section: GallerySection) {
+    return this.albums
+      .filter((album) => album.section === section)
+      .sort((a, b) => b.id - a.id)
+      .map((album) => {
+        const photos = this.photos.filter((photo) => photo.albumId === album.id)
+        const cover = photos.find((photo) => photo.id === album.coverPhotoId) ?? photos[0]
+        return { ...album, photoCount: photos.length, coverFilename: cover?.filename ?? null }
+      })
+  }
 
   async createAlbum(input: NewAlbum) {
     const album: Album = {
