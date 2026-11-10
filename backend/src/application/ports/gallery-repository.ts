@@ -7,4 +7,7 @@ export interface GalleryRepository {
   createAlbum(input: NewAlbum): Promise<Album>
   findAlbum(id: number): Promise<Album | null>
   addPhoto(input: NewPhoto): Promise<Photo>
+  findPhoto(id: number): Promise<Photo | null>
+  /** Supprime la ligne de la photo ; le fichier sur disque reste à la charge de l'appelant. */
+  deletePhoto(id: number): Promise<void>
 }

@@ -120,4 +120,24 @@ export class MySqlGalleryRepository implements GalleryRepository {
     }
     return mapPhoto(rows[0])
   }
+
+  public async findPhoto(id: number): Promise<Photo | null> {
+    const rows = await select<PhotoRow>(
+      `SELECT ${PHOTO_COLUMNS} FROM gallery_photos WHERE id = ? LIMIT 1`,
+      [id]
+    )
+    return rows.length > 0 ? mapPhoto(rows[0]) : null
+  }
+
+  public async deletePhoto(id: number): Promise<void> {
+    // cover_photo_id n'a pas de clé étrangère : on le remet à NULL nous-mêmes, dans la même
+    // transaction que la suppression, pour ne jamais laisser de couverture orpheline.
+    await Database.transaction(async (transaction) => {
+      await transaction.rawQuery(
+        'UPDATE gallery_albums SET cover_photo_id = NULL WHERE cover_photo_id = ?',
+        [id]
+      )
+      await transaction.rawQuery('DELETE FROM gallery_photos WHERE id = ?', [id])
+    })
+  }
 }
