@@ -39,6 +39,7 @@ async function createTables() {
       created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
       updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
       FOREIGN KEY (album_id) REFERENCES gallery_albums(id) ON DELETE CASCADE,
+      UNIQUE INDEX gallery_photos_filename_unique (filename),
       INDEX gallery_photos_album_index (album_id)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
   `)
