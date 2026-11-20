@@ -11,6 +11,15 @@ export type Album = {
 
 export type NewAlbum = Pick<Album, 'section' | 'title'>
 
+/**
+ * Album tel qu'affiché dans la grille. La couverture est la photo choisie (`coverPhotoId`),
+ * à défaut la plus ancienne photo de l'album ; `null` si l'album est vide.
+ */
+export type AlbumSummary = Album & {
+  photoCount: number
+  coverFilename: string | null
+}
+
 export type Photo = {
   id: number
   albumId: number
