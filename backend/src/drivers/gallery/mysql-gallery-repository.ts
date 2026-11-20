@@ -143,7 +143,7 @@ export class MySqlGalleryRepository implements GalleryRepository {
 
   public async listPhotos(albumId: number): Promise<Photo[]> {
     const photos = await select<PhotoRow>(
-      `SELECT ${PHOTO_COLUMNS} FROM gallery_photos WHERE album_id = ? ORDER BY created_at ASC`,
+      `SELECT ${PHOTO_COLUMNS} FROM gallery_photos WHERE album_id = ? ORDER BY created_at ASC, id ASC`,
       [albumId]
     )
     return photos.map(mapPhoto)
