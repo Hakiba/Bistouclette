@@ -30,3 +30,6 @@ export type Photo = {
 }
 
 export type NewPhoto = Pick<Photo, 'albumId' | 'filename' | 'uploadedBy'>
+
+/** Album ouvert : ses photos, de la plus ancienne à la plus récente. */
+export type AlbumWithPhotos = Album & { photos: Photo[] }
