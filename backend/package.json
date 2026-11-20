@@ -42,21 +42,21 @@
   "devDependencies": {
     "@types/bcryptjs": "^3.0.0",
     "@types/nodemailer": "^8.0.2",
-    "eslint": "^10.14.0",
+    "eslint": "^10.15.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.7",
-    "prettier": "^3.9.10",
+    "prettier": "^3.10.1",
     "tsc-alias": "^1.9.10",
     "tsx": "^4.23.15",
     "typescript": "^7.0.2"
   },
   "dependencies": {
-    "@fastify/cors": "^11.4.1",
-    "@fastify/static": "^10.1.10",
+    "@fastify/cors": "^11.4.3",
+    "@fastify/static": "^10.1.11",
     "bcryptjs": "^3.0.3",
     "dotenv": "^18.0.10",
     "fastify": "^5.12.8",
     "mysql2": "^3.24.6",
-    "nodemailer": "^10.5.0"
+    "nodemailer": "^10.6.0"
   }
 }
