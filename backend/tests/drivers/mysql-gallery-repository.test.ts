@@ -112,6 +112,53 @@ test('la photo choisie comme couverture l’emporte sur la plus ancienne', { ski
   assert.equal(found?.coverFilename, 'b.jpg')
 })
 
+test('retrouve une photo par son identifiant', { skip }, async () => {
+  const album = await createAlbum()
+  const added = await repository.addPhoto({ albumId: album.id, filename: 'p.jpg', uploadedBy: 3 })
+
+  assert.deepEqual(await repository.findPhoto(added.id), added)
+  assert.equal(await repository.findPhoto(2_000_000_000), null)
+})
+
+test('supprime la ligne de la photo', { skip }, async () => {
+  const album = await createAlbum()
+  const photo = await repository.addPhoto({ albumId: album.id, filename: 'p.jpg', uploadedBy: 3 })
+
+  await repository.deletePhoto(photo.id)
+
+  assert.equal(await repository.findPhoto(photo.id), null)
+})
+
+test('supprimer la photo de couverture remet la couverture par défaut', { skip }, async () => {
+  const album = await createAlbum()
+  await repository.addPhoto({ albumId: album.id, filename: 'a.jpg', uploadedBy: 1 })
+  const chosen = await repository.addPhoto({ albumId: album.id, filename: 'b.jpg', uploadedBy: 1 })
+  await Database.rawQuery('UPDATE gallery_albums SET cover_photo_id = ? WHERE id = ?', [
+    chosen.id,
+    album.id,
+  ])
+
+  await repository.deletePhoto(chosen.id)
+
+  assert.equal((await repository.findAlbum(album.id))?.coverPhotoId, null)
+  const found = (await repository.listAlbums('velo')).find((item) => item.id === album.id)
+  assert.equal(found?.coverFilename, 'a.jpg')
+})
+
+test('supprimer une autre photo ne change pas la couverture choisie', { skip }, async () => {
+  const album = await createAlbum()
+  const other = await repository.addPhoto({ albumId: album.id, filename: 'a.jpg', uploadedBy: 1 })
+  const chosen = await repository.addPhoto({ albumId: album.id, filename: 'b.jpg', uploadedBy: 1 })
+  await Database.rawQuery('UPDATE gallery_albums SET cover_photo_id = ? WHERE id = ?', [
+    chosen.id,
+    album.id,
+  ])
+
+  await repository.deletePhoto(other.id)
+
+  assert.equal((await repository.findAlbum(album.id))?.coverPhotoId, chosen.id)
+})
+
 test('ne liste pas les albums des autres sections', { skip }, async () => {
   const five = await createAlbum('Finale', 'five')
 

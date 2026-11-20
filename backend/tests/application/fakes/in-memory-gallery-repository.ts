@@ -8,6 +8,10 @@ export class InMemoryGalleryRepository implements GalleryRepository {
   public photos: Photo[] = []
   /** Simule une panne de la base au moment d'enregistrer une photo. */
   public failOnAddPhoto = false
+  /** Simule une panne de la base au moment de supprimer une photo. */
+  public failOnDeletePhoto = false
+  private nextAlbumId = 1
+  private nextPhotoId = 1
 
   async listAlbums(section: GallerySection) {
     return this.albums
@@ -22,7 +26,7 @@ export class InMemoryGalleryRepository implements GalleryRepository {
 
   async createAlbum(input: NewAlbum) {
     const album: Album = {
-      id: this.albums.length + 1,
+      id: this.nextAlbumId++,
       ...input,
       coverPhotoId: null,
       createdAt: new Date('2026-11-08T10:00:00'),
@@ -40,12 +44,23 @@ export class InMemoryGalleryRepository implements GalleryRepository {
       throw new Error('base indisponible')
     }
     const photo: Photo = {
-      id: this.photos.length + 1,
+      id: this.nextPhotoId++,
       ...input,
       caption: '',
       createdAt: new Date('2026-11-08T10:00:00'),
     }
     this.photos.push(photo)
     return photo
+  }
+
+  async findPhoto(id: number) {
+    return this.photos.find((photo) => photo.id === id) ?? null
+  }
+
+  async deletePhoto(id: number) {
+    if (this.failOnDeletePhoto) {
+      throw new Error('base indisponible')
+    }
+    this.photos = this.photos.filter((photo) => photo.id !== id)
   }
 }
