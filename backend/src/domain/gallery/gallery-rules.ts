@@ -36,10 +36,18 @@ export function assertSectionIsValid(value: unknown): GallerySection {
 }
 
 export function assertTitleIsValid(value: unknown): string {
-  // TODO(human): renvoyer le titre sans espaces autour. Lever une GalleryError
-  // 'ALBUM_TITLE_REQUIRED' s'il est absent ou vide une fois nettoyé, et
-  // 'ALBUM_TITLE_TOO_LONG' s'il dépasse GALLERY.maxTitleLength.
-  throw new Error('à implémenter')
+  const title = typeof value === 'string' ? value.trim() : ''
+
+  if (!title) {
+    throw new GalleryError('ALBUM_TITLE_REQUIRED', 'Le titre est requis.')
+  }
+  if (title.length > GALLERY.maxTitleLength) {
+    throw new GalleryError(
+      'ALBUM_TITLE_TOO_LONG',
+      `Le titre ne doit pas dépasser ${GALLERY.maxTitleLength} caractères.`
+    )
+  }
+  return title
 }
 
 /**
@@ -47,8 +55,22 @@ export function assertTitleIsValid(value: unknown): string {
  * type MIME envoyés par le client (falsifiables). Renvoie null si non autorisé.
  */
 export function detectImageType(content: Buffer): ImageType | null {
-  // TODO(human): 'jpg' si le fichier commence par FF D8 FF ; 'png' s'il commence par
-  // 89 50 4E 47 0D 0A 1A 0A ; 'webp' s'il commence par "RIFF" et contient "WEBP" aux
-  // octets 8 à 11. Sinon null. Pense à un buffer trop court.
-  throw new Error('à implémenter')
+  if (content[0] === 0xff && content[1] === 0xd8 && content[2] === 0xff) {
+    return 'jpg'
+  }
+
+  if (content[0] === 0x89 && content[1] === 0x50 && content[2] === 0x4e && content[3] === 0x47) {
+    return 'png'
+  }
+
+  // RIFF est aussi le conteneur des WAV et AVI : seul « WEBP » aux octets 8 à 11 désigne une image.
+  if (
+    content.length >= 12 &&
+    content.subarray(0, 4).toString('ascii') === 'RIFF' &&
+    content.subarray(8, 12).toString('ascii') === 'WEBP'
+  ) {
+    return 'webp'
+  }
+
+  return null
 }
