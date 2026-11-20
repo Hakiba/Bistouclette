@@ -1,6 +1,13 @@
 import type { GalleryRepository } from 'App/application/ports/gallery-repository'
 import type { GallerySection } from 'App/domain/gallery/gallery-rules'
-import type { Album, AlbumSummary, NewAlbum, NewPhoto, Photo } from 'App/domain/gallery/types'
+import type {
+  Album,
+  AlbumChanges,
+  AlbumSummary,
+  NewAlbum,
+  NewPhoto,
+  Photo,
+} from 'App/domain/gallery/types'
 import Database from '../mysql/mysql'
 
 type AlbumRow = {
@@ -96,6 +103,11 @@ export class MySqlGalleryRepository implements GalleryRepository {
     }
 
     return album
+  }
+
+  public async updateAlbum(_id: number, _changes: AlbumChanges): Promise<Album> {
+    // Étape suivante (adaptateur) : implémenté après le cas d'usage.
+    throw new Error('à implémenter')
   }
 
   public async findAlbum(id: number): Promise<Album | null> {

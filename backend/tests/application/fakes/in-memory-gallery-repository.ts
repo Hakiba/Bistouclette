@@ -1,6 +1,12 @@
 import type { GalleryRepository } from '../../../src/application/ports/gallery-repository'
 import type { GallerySection } from '../../../src/domain/gallery/gallery-rules'
-import type { Album, NewAlbum, NewPhoto, Photo } from '../../../src/domain/gallery/types'
+import type {
+  Album,
+  AlbumChanges,
+  NewAlbum,
+  NewPhoto,
+  Photo,
+} from '../../../src/domain/gallery/types'
 
 /** Faux port en mémoire : aucun SQL, aucun serveur. */
 export class InMemoryGalleryRepository implements GalleryRepository {
@@ -12,6 +18,8 @@ export class InMemoryGalleryRepository implements GalleryRepository {
   public failOnDeletePhoto = false
   /** Simule une panne de la base au moment de supprimer un album. */
   public failOnDeleteAlbum = false
+  /** Simule une panne de la base au moment de modifier un album. */
+  public failOnUpdateAlbum = false
   private nextAlbumId = 1
   private nextPhotoId = 1
 
@@ -34,6 +42,18 @@ export class InMemoryGalleryRepository implements GalleryRepository {
       createdAt: new Date('2026-11-08T10:00:00'),
     }
     this.albums.push(album)
+    return album
+  }
+
+  async updateAlbum(id: number, changes: AlbumChanges) {
+    if (this.failOnUpdateAlbum) {
+      throw new Error('base indisponible')
+    }
+    const album = this.albums.find((item) => item.id === id)
+    if (!album) {
+      throw new Error('album introuvable')
+    }
+    Object.assign(album, changes)
     return album
   }
 

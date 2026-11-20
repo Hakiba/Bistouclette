@@ -11,6 +11,9 @@ export type Album = {
 
 export type NewAlbum = Pick<Album, 'section' | 'title'>
 
+/** Modifications d'un album : seuls les champs présents changent (`null` = couverture par défaut). */
+export type AlbumChanges = Partial<Pick<Album, 'title' | 'coverPhotoId'>>
+
 /**
  * Album tel qu'affiché dans la grille. La couverture est la photo choisie (`coverPhotoId`),
  * à défaut la plus ancienne photo de l'album ; `null` si l'album est vide.
