@@ -105,9 +105,32 @@ export class MySqlGalleryRepository implements GalleryRepository {
     return album
   }
 
-  public async updateAlbum(_id: number, _changes: AlbumChanges): Promise<Album> {
-    // Étape suivante (adaptateur) : implémenté après le cas d'usage.
-    throw new Error('à implémenter')
+  public async updateAlbum(id: number, changes: AlbumChanges): Promise<Album> {
+    // Un seul UPDATE : les champs modifiés s'écrivent ensemble ou pas du tout. Les noms de
+    // colonnes viennent de ce code, les valeurs passent toujours par des `?`.
+    const assignments: string[] = []
+    const values: unknown[] = []
+    if (changes.title !== undefined) {
+      assignments.push('title = ?')
+      values.push(changes.title)
+    }
+    if (changes.coverPhotoId !== undefined) {
+      assignments.push('cover_photo_id = ?')
+      values.push(changes.coverPhotoId)
+    }
+    if (assignments.length > 0) {
+      await Database.rawQuery(`UPDATE gallery_albums SET ${assignments.join(', ')} WHERE id = ?`, [
+        ...values,
+        id,
+      ])
+    }
+
+    const album = await this.findAlbum(id)
+    if (!album) {
+      throw new Error("L'album vient d'être modifié mais reste introuvable.")
+    }
+
+    return album
   }
 
   public async findAlbum(id: number): Promise<Album | null> {

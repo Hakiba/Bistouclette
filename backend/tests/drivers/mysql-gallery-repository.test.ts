@@ -251,3 +251,74 @@ test('supprime l’album et ses photos sans toucher aux autres albums', { skip }
   assert.equal(await repository.findPhoto(photo.id), null)
   assert.deepEqual(await repository.findPhoto(kept.id), kept)
 })
+
+test('renomme un album sans toucher à sa couverture', { skip }, async () => {
+  const album = await createAlbum('Ancien titre')
+  const photo = await repository.addPhoto({
+    albumId: album.id,
+    filename: unique('c.jpg'),
+    uploadedBy: 1,
+  })
+  await repository.updateAlbum(album.id, { coverPhotoId: photo.id })
+
+  const updated = await repository.updateAlbum(album.id, { title: 'Nouveau titre' })
+
+  assert.equal(updated.title, 'Nouveau titre')
+  assert.equal(updated.coverPhotoId, photo.id)
+  assert.deepEqual(await repository.findAlbum(album.id), updated)
+})
+
+test('choisit puis retire la couverture sans toucher au titre', { skip }, async () => {
+  const album = await createAlbum('Titre stable')
+  const photo = await repository.addPhoto({
+    albumId: album.id,
+    filename: unique('c.jpg'),
+    uploadedBy: 1,
+  })
+
+  const chosen = await repository.updateAlbum(album.id, { coverPhotoId: photo.id })
+  const reset = await repository.updateAlbum(album.id, { coverPhotoId: null })
+
+  assert.equal(chosen.coverPhotoId, photo.id)
+  assert.equal(chosen.title, 'Titre stable')
+  assert.equal(reset.coverPhotoId, null)
+  assert.equal(reset.title, 'Titre stable')
+})
+
+test('modifie titre et couverture ensemble sans toucher aux autres albums', { skip }, async () => {
+  const album = await createAlbum('Avant')
+  const other = await createAlbum('Autre')
+  const photo = await repository.addPhoto({
+    albumId: album.id,
+    filename: unique('c.jpg'),
+    uploadedBy: 1,
+  })
+
+  const updated = await repository.updateAlbum(album.id, {
+    title: 'Après',
+    coverPhotoId: photo.id,
+  })
+
+  assert.equal(updated.title, 'Après')
+  assert.equal(updated.coverPhotoId, photo.id)
+  assert.equal((await repository.findAlbum(other.id))?.title, 'Autre')
+})
+
+test('une modification vide renvoie l’album inchangé', { skip }, async () => {
+  const album = await createAlbum('Inchangé')
+
+  assert.deepEqual(await repository.updateAlbum(album.id, {}), album)
+})
+
+test('protège contre l’injection SQL dans le titre', { skip }, async () => {
+  const album = await createAlbum()
+  const hostile = "x'; DROP TABLE gallery_albums; --"
+
+  const updated = await repository.updateAlbum(album.id, { title: hostile })
+
+  assert.equal(updated.title, hostile)
+})
+
+test('lève une erreur pour un album inconnu', { skip }, async () => {
+  await assert.rejects(repository.updateAlbum(2_000_000_000, { title: 'Fantôme' }))
+})
