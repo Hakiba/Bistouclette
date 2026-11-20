@@ -3,7 +3,10 @@ node_modules
 build/
 public/
 coverage
+# Photos uploadées en local (UPLOAD_DIR par défaut).
+uploads/
 .vscode
+.vscode/
 .DS_STORE
 .env
 tmp
