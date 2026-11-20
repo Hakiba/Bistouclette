@@ -141,13 +141,15 @@ export class MySqlGalleryRepository implements GalleryRepository {
     })
   }
 
-  public async listPhotos(_albumId: number): Promise<Photo[]> {
-    // Étape suivante (adaptateur) : implémenté après le cas d'usage.
-    throw new Error('à implémenter')
+  public async listPhotos(albumId: number): Promise<Photo[]> {
+    const photos = await select<PhotoRow>(
+      `SELECT ${PHOTO_COLUMNS} FROM gallery_photos WHERE album_id = ? ORDER BY created_at ASC`,
+      [albumId]
+    )
+    return photos.map(mapPhoto)
   }
 
-  public async deleteAlbum(_id: number): Promise<void> {
-    // Étape suivante (adaptateur) : implémenté après le cas d'usage.
-    throw new Error('à implémenter')
+  public async deleteAlbum(id: number): Promise<void> {
+    await Database.rawQuery('DELETE FROM gallery_albums WHERE id = ?', [id])
   }
 }

@@ -210,3 +210,44 @@ test('ne liste pas les albums des autres sections', { skip }, async () => {
     false
   )
 })
+
+test('liste les photos d’un album de la plus ancienne à la plus récente', { skip }, async () => {
+  const album = await createAlbum()
+  const other = await createAlbum('Autre album')
+  // Le plus ancien ('z') n'est pas le premier par ordre alphabétique : un tri sur filename échouerait.
+  const first = await repository.addPhoto({
+    albumId: album.id,
+    filename: unique('z.jpg'),
+    uploadedBy: 1,
+  })
+  const second = await repository.addPhoto({
+    albumId: album.id,
+    filename: unique('a.jpg'),
+    uploadedBy: 1,
+  })
+  await repository.addPhoto({ albumId: other.id, filename: unique('o.jpg'), uploadedBy: 1 })
+
+  assert.deepEqual(await repository.listPhotos(album.id), [first, second])
+  assert.deepEqual(await repository.listPhotos(2_000_000_000), [])
+})
+
+test('supprime l’album et ses photos sans toucher aux autres albums', { skip }, async () => {
+  const album = await createAlbum()
+  const other = await createAlbum('À conserver')
+  const photo = await repository.addPhoto({
+    albumId: album.id,
+    filename: unique('x.jpg'),
+    uploadedBy: 1,
+  })
+  const kept = await repository.addPhoto({
+    albumId: other.id,
+    filename: unique('k.jpg'),
+    uploadedBy: 1,
+  })
+
+  await repository.deleteAlbum(album.id)
+
+  assert.equal(await repository.findAlbum(album.id), null)
+  assert.equal(await repository.findPhoto(photo.id), null)
+  assert.deepEqual(await repository.findPhoto(kept.id), kept)
+})
