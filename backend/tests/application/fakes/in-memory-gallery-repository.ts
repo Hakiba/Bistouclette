@@ -10,6 +10,8 @@ export class InMemoryGalleryRepository implements GalleryRepository {
   public failOnAddPhoto = false
   /** Simule une panne de la base au moment de supprimer une photo. */
   public failOnDeletePhoto = false
+  /** Simule une panne de la base au moment de supprimer un album. */
+  public failOnDeleteAlbum = false
   private nextAlbumId = 1
   private nextPhotoId = 1
 
@@ -62,5 +64,18 @@ export class InMemoryGalleryRepository implements GalleryRepository {
       throw new Error('base indisponible')
     }
     this.photos = this.photos.filter((photo) => photo.id !== id)
+  }
+
+  async listPhotos(albumId: number) {
+    return this.photos.filter((photo) => photo.albumId === albumId)
+  }
+
+  async deleteAlbum(id: number) {
+    if (this.failOnDeleteAlbum) {
+      throw new Error('base indisponible')
+    }
+    this.albums = this.albums.filter((album) => album.id !== id)
+    // Comme ON DELETE CASCADE : les lignes de photos disparaissent avec l'album.
+    this.photos = this.photos.filter((photo) => photo.albumId !== id)
   }
 }

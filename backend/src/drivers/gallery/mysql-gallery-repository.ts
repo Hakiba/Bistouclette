@@ -140,4 +140,14 @@ export class MySqlGalleryRepository implements GalleryRepository {
       await transaction.rawQuery('DELETE FROM gallery_photos WHERE id = ?', [id])
     })
   }
+
+  public async listPhotos(_albumId: number): Promise<Photo[]> {
+    // Étape suivante (adaptateur) : implémenté après le cas d'usage.
+    throw new Error('à implémenter')
+  }
+
+  public async deleteAlbum(_id: number): Promise<void> {
+    // Étape suivante (adaptateur) : implémenté après le cas d'usage.
+    throw new Error('à implémenter')
+  }
 }

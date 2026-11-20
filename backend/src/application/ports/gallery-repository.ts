@@ -10,4 +10,8 @@ export interface GalleryRepository {
   findPhoto(id: number): Promise<Photo | null>
   /** Supprime la ligne de la photo ; le fichier sur disque reste à la charge de l'appelant. */
   deletePhoto(id: number): Promise<void>
+  /** Photos d'un album, de la plus ancienne à la plus récente. */
+  listPhotos(albumId: number): Promise<Photo[]>
+  /** Supprime l'album et, en cascade, ses lignes de photos ; les fichiers restent à la charge de l'appelant. */
+  deleteAlbum(id: number): Promise<void>
 }
