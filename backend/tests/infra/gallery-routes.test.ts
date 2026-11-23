@@ -3,11 +3,12 @@ import test from 'node:test'
 import Fastify from 'fastify'
 import { registerGalleryRoutes } from '../../src/infra/http/gallery-routes'
 import { inMemoryGalleryUseCases } from '../application/fakes/in-memory-gallery-use-cases'
+import { fakeGuards } from './fakes/fake-guards'
 
 async function setup() {
   const { repository, useCases } = inMemoryGalleryUseCases()
   const app = Fastify()
-  await registerGalleryRoutes(app, async () => useCases)
+  await registerGalleryRoutes(app, async () => useCases, fakeGuards)
 
   const album = await repository.createAlbum({ section: 'velo', title: 'Ventoux' })
   const empty = await repository.createAlbum({ section: 'velo', title: 'Vide' })
@@ -101,9 +102,13 @@ test('GET /api/gallery/albums/:id renvoie 404 pour un album inconnu ou un identi
 test('une erreur inattendue donne un 500 sans détail interne', async (t) => {
   t.mock.method(console, 'error', () => {})
   const app = Fastify()
-  await registerGalleryRoutes(app, async () => {
-    throw new Error('mot de passe MySQL: secret')
-  })
+  await registerGalleryRoutes(
+    app,
+    async () => {
+      throw new Error('mot de passe MySQL: secret')
+    },
+    fakeGuards
+  )
 
   const response = await app.inject({ method: 'GET', url: '/api/gallery/velo' })
 

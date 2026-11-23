@@ -1,4 +1,4 @@
-import type { AlbumSummary, AlbumWithPhotos, Photo } from 'App/domain/gallery/types'
+import type { Album, AlbumSummary, AlbumWithPhotos, Photo } from 'App/domain/gallery/types'
 
 /*
 |--------------------------------------------------------------------------
@@ -22,6 +22,16 @@ export function serializePhoto(photo: Photo) {
     url: photoUrl(photo.filename),
     caption: photo.caption,
     createdAt: photo.createdAt.toISOString(),
+  }
+}
+
+export function serializeAlbum(album: Album) {
+  return {
+    id: album.id,
+    section: album.section,
+    title: album.title,
+    createdAt: album.createdAt.toISOString(),
+    coverPhotoId: album.coverPhotoId,
   }
 }
 
