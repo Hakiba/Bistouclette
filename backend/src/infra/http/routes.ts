@@ -12,6 +12,8 @@ import ensureFiveSchema from 'App/drivers/five/five-schema'
 import * as Repository from 'App/drivers/five/five-repository'
 import * as Pronostics from 'App/drivers/five/pronostic-service'
 import { savePronostic } from 'App/infra/composition/five-use-cases'
+import { galleryUseCases } from 'App/infra/composition/gallery-use-cases'
+import { registerGalleryRoutes } from 'App/infra/http/gallery-routes'
 import { PronosticError } from 'App/domain/pronostics/pronostic-rules'
 import {
   serializeLeaderboard,
@@ -398,4 +400,6 @@ export async function registerRoutes(app: FastifyInstance) {
       }
     }
   )
+
+  await registerGalleryRoutes(app, galleryUseCases, { requireAdmin })
 }

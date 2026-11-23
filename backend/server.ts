@@ -7,6 +7,7 @@ import multipart from '@fastify/multipart'
 import fastifyStatic from '@fastify/static'
 import { registerRoutes } from './src/infra/http/routes'
 import { DiskFileStorage } from './src/drivers/storage/disk-file-storage'
+import { registerUploads } from './src/infra/http/uploads'
 
 export async function buildServer() {
   const app = Fastify({ logger: process.env.NODE_ENV !== 'test' })
@@ -22,6 +23,8 @@ export async function buildServer() {
   await registerRoutes(app)
   const publicPath = [join(__dirname, 'public'), join(__dirname, '..', 'public')].find(existsSync)
   if (publicPath) await app.register(fastifyStatic, { root: publicPath, wildcard: false })
+  // Après le site statique : un second @fastify/static doit s'enregistrer sans decorateReply.
+  await registerUploads(app)
   if (publicPath) {
     // Export statique Next : /admin doit servir admin.html, sinon 404.html.
     app.setNotFoundHandler((request, reply) => {
