@@ -2,6 +2,7 @@ import Image from "next/image";
 import styled from "styled-components";
 import SiteShell from "../components/SiteShell";
 import { bp, fluidColumns, shrinkable, theme } from "../components/ui";
+import Gallery from "../components/Gallery";
 
 const Hero = styled.section`
   display: grid;
@@ -328,6 +329,10 @@ export default function VeloPage() {
           <CtaButton onClick={handleDownload}>Télécharger le GPX</CtaButton>
         </TraceCard>
       </Section>
-    </SiteShell>
+
+          <Section>
+            <Gallery section="velo" />
+          </Section>
+        </SiteShell>
   );
 }

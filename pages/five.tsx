@@ -39,6 +39,7 @@ import {
   sortByKickoff,
 } from "../lib/five";
 import UserCookie from "../utils/UserCookie";
+import Gallery from "../components/Gallery";
 
 /*
 |--------------------------------------------------------------------------
@@ -910,6 +911,10 @@ export default function FivePage() {
           )}
         </Panel>
       </Section>
+      
+          <Section>
+            <Gallery section="five" />
+          </Section>
 
       <VisuallyHidden aria-live="polite">{feedback?.message}</VisuallyHidden>
     </SiteShell>

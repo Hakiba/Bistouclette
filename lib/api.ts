@@ -72,7 +72,11 @@ export async function request<T>(path: string, options: RequestOptions = {}): Pr
     Object.assign(headers, header);
   }
 
-  if (body !== undefined) {
+  // Un FormData fixe lui-même son Content-Type (avec la frontière multipart) :
+  // forcer le JSON casserait l'envoi de fichiers.
+  const isForm = body instanceof FormData;
+
+  if (body !== undefined && !isForm) {
     headers["Content-Type"] = "application/json";
   }
 
@@ -82,7 +86,7 @@ export async function request<T>(path: string, options: RequestOptions = {}): Pr
     response = await fetch(`${API_BASE}${path}`, {
       method,
       headers,
-      body: body === undefined ? undefined : JSON.stringify(body),
+      body: body === undefined ? undefined : isForm ? body : JSON.stringify(body),
     });
   } catch {
     throw new ApiError(0, "Serveur injoignable. Réessaie dans un instant.", "NETWORK_ERROR");
