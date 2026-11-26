@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { errorMessage } from "../lib/api";
+import UserCookie from "../utils/UserCookie";
 import {
   assetUrl,
   galleryApi,
@@ -12,6 +13,7 @@ import {
   Banner,
   Button,
   EmptyState,
+  Input,
   Overlay,
   Panel,
   PanelHeader,
@@ -119,6 +121,21 @@ export default function Gallery({ section }: GalleryProps) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // --- Administration ---
+  // Les droits réels sont vérifiés par le serveur : ce booléen ne sert qu'à montrer ou cacher
+  // les boutons.
+  const [isAdmin, setIsAdmin] = useState(false);
+  // Compteur qu'on incrémente pour forcer le rechargement de la liste d'albums.
+  const [reloadKey, setReloadKey] = useState(0);
+  const [newTitle, setNewTitle] = useState("");
+  const [creating, setCreating] = useState(false);
+  const [adminError, setAdminError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const user = UserCookie.get();
+    setIsAdmin(user?.role === "admin");
+  }, []);
+
   useEffect(() => {
     // Propre à CET effet : le nettoyage ci-dessous le passe à true quand `section` change
     // ou que le composant disparaît, pour ignorer une réponse arrivée trop tard.
@@ -149,12 +166,35 @@ export default function Gallery({ section }: GalleryProps) {
     return () => {
       cancelled = true;
     };
-  }, [section]);
+  }, [section, reloadKey]);
 
-  // Album ouvert : `null` = on affiche la grille d'albums.
+  const handleCreateAlbum = async (event: React.FormEvent) => {
+    event.preventDefault();
+    const title = newTitle.trim();
+    if (!title) {
+      setAdminError("Donne un titre.");
+      return;
+    }
+
+    setCreating(true);
+    setAdminError(null);
+
+    try {
+      await galleryApi.createAlbum({ section, title });
+      setNewTitle("");
+      setReloadKey((k) => k + 1);
+    } catch (cause) {
+      setAdminError(errorMessage(cause));
+    } finally {
+      setCreating(false);
+    }
+  };
+
+  // --- Album sélectionné ---
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [album, setAlbum] = useState<AlbumWithPhotos | null>(null);
   const [albumLoading, setAlbumLoading] = useState(false);
+
   const [albumError, setAlbumError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -202,7 +242,8 @@ export default function Gallery({ section }: GalleryProps) {
   const isLightboxOpen = lightboxIndex !== null;
   const photoCount = current?.photos.length ?? 0;
 
-  const lightboxPhoto = lightboxIndex !== null ? current?.photos[lightboxIndex] : undefined;
+  const lightboxPhoto =
+    lightboxIndex !== null ? current?.photos[lightboxIndex] : undefined;
 
   useEffect(() => {
     if (!isLightboxOpen || photoCount === 0) return;
@@ -257,7 +298,11 @@ export default function Gallery({ section }: GalleryProps) {
         ) : (
           <PhotoGrid>
             {current?.photos.map((photo, index) => (
-              <PhotoThumb key={photo.id} type="button" onClick={() => setLightboxIndex(index)}>
+              <PhotoThumb
+                key={photo.id}
+                type="button"
+                onClick={() => setLightboxIndex(index)}
+              >
                 {/* Photos uploadées servies par le backend : next/image n'optimiserait rien (unoptimized). */}
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
@@ -271,15 +316,24 @@ export default function Gallery({ section }: GalleryProps) {
         )}
 
         {lightboxPhoto && current && lightboxIndex !== null && (
-          <Overlay role="dialog" aria-modal="true" onClick={() => setLightboxIndex(null)}>
+          <Overlay
+            role="dialog"
+            aria-modal="true"
+            onClick={() => setLightboxIndex(null)}
+          >
             <LightboxFrame onClick={(event) => event.stopPropagation()}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={assetUrl(lightboxPhoto.url)} alt={`Photo ${lightboxIndex + 1} de l'album ${current.title}`} />
+              <img
+                src={assetUrl(lightboxPhoto.url)}
+                alt={`Photo ${lightboxIndex + 1} de l'album ${current.title}`}
+              />
               <LightboxControls>
                 <Button
                   type="button"
                   $variant="secondary"
-                  onClick={() => setLightboxIndex((i) => stepIndex(i, -1, photoCount))}
+                  onClick={() =>
+                    setLightboxIndex((i) => stepIndex(i, -1, photoCount))
+                  }
                 >
                   ←
                 </Button>
@@ -289,11 +343,17 @@ export default function Gallery({ section }: GalleryProps) {
                 <Button
                   type="button"
                   $variant="secondary"
-                  onClick={() => setLightboxIndex((i) => stepIndex(i, 1, photoCount))}
+                  onClick={() =>
+                    setLightboxIndex((i) => stepIndex(i, 1, photoCount))
+                  }
                 >
                   →
                 </Button>
-                <Button type="button" $variant="secondary" onClick={() => setLightboxIndex(null)}>
+                <Button
+                  type="button"
+                  $variant="secondary"
+                  onClick={() => setLightboxIndex(null)}
+                >
                   Fermer
                 </Button>
               </LightboxControls>
@@ -310,6 +370,25 @@ export default function Gallery({ section }: GalleryProps) {
         <h2>Photos</h2>
         <span>{albums.length} album(s)</span>
       </PanelHeader>
+
+      {isAdmin && (
+        <form onSubmit={handleCreateAlbum}>
+          <Input
+            value={newTitle}
+            onChange={(event) => setNewTitle(event.target.value)}
+            placeholder="Titre du nouvel album"
+            aria-label="Titre du nouvel album"
+          />
+          <Button type="submit" disabled={creating}>
+            {creating ? "Création…" : "Créer un album"}
+          </Button>
+          {adminError && (
+            <Banner $tone="danger" role="alert">
+              {adminError}
+            </Banner>
+          )}
+        </form>
+      )}
 
       {loading ? (
         <Spinner />
