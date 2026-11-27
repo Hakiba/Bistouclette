@@ -24,15 +24,15 @@
     "next-auth": "^4.24.15",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "styled-components": "^6.6.0"
+    "styled-components": "^6.7.0"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.3.5",
     "@types/bcryptjs": "^3.0.0",
-    "@types/node": "^26.6.6",
+    "@types/node": "^26.6.7",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
-    "autoprefixer": "^10.6.1",
+    "autoprefixer": "^10.7.0",
     "cross-env": "^10.1.0",
     "eslint": "^10.15.0",
     "eslint-config-next": "^16.4.6",
