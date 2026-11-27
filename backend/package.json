@@ -52,11 +52,11 @@
   },
   "dependencies": {
     "@fastify/cors": "^11.4.3",
-    "@fastify/static": "^10.1.11",
+    "@fastify/static": "^10.1.12",
     "bcryptjs": "^3.0.3",
     "dotenv": "^18.0.10",
     "fastify": "^5.12.8",
     "mysql2": "^3.24.6",
-    "nodemailer": "^10.6.0"
+    "nodemailer": "^10.6.1"
   }
 }
